@@ -1,0 +1,295 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { supabase, type Post } from '../../lib/supabase';
+import { isPlaceholder } from '../../lib/supabase';
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  throw new Error('Slug parameter is required');
+}
+
+// Only attempt to fetch if we have real Supabase credentials
+let post = null;
+let error = null;
+
+if (!isPlaceholder) {
+  const { data, error: fetchError } = await supabase
+    .from('posts')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+  
+  post = data;
+  error = fetchError;
+  
+  if (error || !post) {
+    throw new Error(`Post not found: ${slug}`);
+  }
+} else {
+  // Redirect to home page if Supabase not configured
+  return Astro.redirect('/');
+}
+
+export async function getStaticPaths() {
+  // Return empty array if Supabase not configured
+  if (isPlaceholder) {
+    return [];
+  }
+  
+  const { data: posts } = await supabase
+    .from('posts')
+    .select('slug');
+  
+  return posts?.map((post) => ({
+    params: { slug: post.slug },
+  })) || [];
+}
+---
+
+<Layout>
+  <main class="main">
+    <article class="post">
+      <header class="post-header">
+        <div class="back-link">
+          <a href="/">← Back to Posts</a>
+        </div>
+        <div class="post-image">
+          <img src={post.image_url} alt={post.title} />
+        </div>
+        <h1 class="post-title">{post.title}</h1>
+        <time class="post-date">
+          {new Date(post.created_at).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })}
+        </time>
+      </header>
+
+      <div class="post-content">
+        <p class="content-text">{post.content}</p>
+      </div>
+
+      <footer class="post-footer">
+        <div class="post-links">
+          {post.link_one_title && (
+            <a href={post.link_one_url} class="post-link primary" target="_blank" rel="noopener noreferrer">
+              {post.link_one_title}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 13V19C18 19.5523 17.5523 20 17 20H5C4.44772 20 4 19.5523 4 19V7C4 6.44772 4.44772 6 5 6H11M15 3H21V9M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          )}
+          {post.link_two_title && (
+            <a href={post.link_two_url} class="post-link secondary" target="_blank" rel="noopener noreferrer">
+              {post.link_two_title}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 13V19C18 19.5523 17.5523 20 17 20H5C4.44772 20 4 19.5523 4 19V7C4 6.44772 4.44772 6 5 6H11M15 3H21V9M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          )}
+          {post.link_three_title && (
+            <a href={post.link_three_url} class="post-link tertiary" target="_blank" rel="noopener noreferrer">
+              {post.link_three_title}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 13V19C18 19.5523 17.5523 20 17 20H5C4.44772 20 4 19.5523 4 19V7C4 6.44772 4.44772 6 5 6H11M15 3H21V9M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          )}
+        </div>
+      </footer>
+    </article>
+  </main>
+</Layout>
+
+<style>
+  .main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  .post {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+  }
+
+  .back-link {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    z-index: 10;
+  }
+
+  .back-link a {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    color: #374151;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .back-link a:hover {
+    background: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+
+  .post-header {
+    position: relative;
+  }
+
+  .post-image {
+    height: 400px;
+    overflow: hidden;
+  }
+
+  .post-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .post-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    padding: 2rem 2rem 1rem;
+    color: #1f2937;
+    line-height: 1.2;
+  }
+
+  .post-date {
+    display: block;
+    padding: 0 2rem 2rem;
+    color: #6b7280;
+    font-weight: 500;
+  }
+
+  .post-content {
+    padding: 0 2rem 2rem;
+  }
+
+  .content-text {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: #374151;
+    margin: 0;
+  }
+
+  .post-footer {
+    padding: 2rem;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .post-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .post-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+
+  .post-link svg {
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+
+  .post-link:hover svg {
+    opacity: 1;
+  }
+
+  .post-link.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .post-link.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+  }
+
+  .post-link.secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border-color: #d1d5db;
+  }
+
+  .post-link.secondary:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+    transform: translateY(-2px);
+  }
+
+  .post-link.tertiary {
+    background: transparent;
+    color: #667eea;
+    border-color: #667eea;
+  }
+
+  .post-link.tertiary:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    .main {
+      padding: 1rem;
+    }
+    
+    .post-title {
+      font-size: 2rem;
+      padding: 1.5rem 1.5rem 1rem;
+    }
+    
+    .post-date {
+      padding: 0 1.5rem 1.5rem;
+    }
+    
+    .post-content {
+      padding: 0 1.5rem 1.5rem;
+    }
+    
+    .post-footer {
+      padding: 1.5rem;
+    }
+    
+    .back-link {
+      position: static;
+      margin-bottom: 1rem;
+    }
+    
+    .post-image {
+      height: 250px;
+    }
+    
+    .post-links {
+      flex-direction: column;
+    }
+  }
+</style>
+</Layout>

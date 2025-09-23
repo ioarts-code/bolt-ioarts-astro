@@ -1,0 +1,298 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { supabase, isPlaceholder, type Post } from '../lib/supabase';
+
+let posts: Post[] | null = null;
+let error = null;
+
+// Only attempt to fetch if we have real Supabase credentials
+if (!isPlaceholder) {
+  const { data, error: fetchError } = await supabase
+    .from('posts')
+    .select('*')
+    .order('created_at', { ascending: false });
+  
+  posts = data;
+  error = fetchError;
+}
+---
+
+<Layout>
+  <main class="main">
+    <header class="header">
+      <h1 class="title">Modern CMS Blog</h1>
+      <p class="subtitle">Discover insights and tutorials on modern web development</p>
+    </header>
+
+    {isPlaceholder ? (
+      <div class="setup-message">
+        <div class="setup-card">
+          <h2>🚀 Ready to Connect Your CMS</h2>
+          <p>Click the "Connect to Supabase" button in the top right to set up your database and start managing content.</p>
+          <div class="features">
+            <div class="feature">✨ Modern blog posts</div>
+            <div class="feature">🖼️ Image management</div>
+            <div class="feature">🔗 Custom link fields</div>
+            <div class="feature">📱 Responsive design</div>
+          </div>
+        </div>
+      </div>
+    ) : (
+      <section class="posts-grid">
+        {posts?.map((post: Post) => (
+          <article class="post-card">
+            <div class="post-image">
+              <img src={post.image_url} alt={post.title} />
+            </div>
+            <div class="post-content">
+              <h2 class="post-title">
+                <a href={`/posts/${post.slug}`}>{post.title}</a>
+              </h2>
+              <p class="post-excerpt">
+                {post.content.substring(0, 150)}...
+              </p>
+              <div class="post-links">
+                {post.link_one_title && (
+                  <a href={post.link_one_url} class="post-link primary">
+                    {post.link_one_title}
+                  </a>
+                )}
+                {post.link_two_title && (
+                  <a href={post.link_two_url} class="post-link secondary">
+                    {post.link_two_title}
+                  </a>
+                )}
+                {post.link_three_title && (
+                  <a href={post.link_three_url} class="post-link tertiary">
+                    {post.link_three_title}
+                  </a>
+                )}
+              </div>
+            </div>
+          </article>
+        ))}
+      </section>
+    )}
+  </main>
+</Layout>
+
+<style>
+  .main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 4rem;
+    color: white;
+  }
+
+  .title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .subtitle {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    margin: 0;
+    font-weight: 300;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .post-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .post-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+  }
+
+  .post-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+  }
+
+  .post-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .post-card:hover .post-image img {
+    transform: scale(1.05);
+  }
+
+  .post-content {
+    padding: 1.5rem;
+  }
+
+  .post-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    line-height: 1.3;
+  }
+
+  .post-title a {
+    color: #1f2937;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .post-title a:hover {
+    color: #667eea;
+  }
+
+  .post-excerpt {
+    color: #6b7280;
+    line-height: 1.6;
+    margin: 0 0 1.5rem 0;
+    font-size: 0.95rem;
+  }
+
+  .post-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .post-link {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+
+  .post-link.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .post-link.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
+
+  .post-link.secondary {
+    background: #f3f4f6;
+    color: #374151;
+    border-color: #d1d5db;
+  }
+
+  .post-link.secondary:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+  }
+
+  .post-link.tertiary {
+    background: transparent;
+    color: #667eea;
+    border-color: #667eea;
+  }
+
+  .post-link.tertiary:hover {
+    background: #667eea;
+    color: white;
+  }
+
+  @media (max-width: 768px) {
+    .main {
+      padding: 1rem;
+    }
+    
+    .title {
+      font-size: 2.5rem;
+    }
+    
+    .posts-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    .post-links {
+      flex-direction: column;
+    }
+  }
+
+  .setup-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+  }
+
+  .setup-card {
+    background: white;
+    border-radius: 16px;
+    padding: 3rem;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    max-width: 500px;
+  }
+
+  .setup-card h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+    color: #1f2937;
+  }
+
+  .setup-card p {
+    font-size: 1.125rem;
+    color: #6b7280;
+    margin: 0 0 2rem 0;
+    line-height: 1.6;
+  }
+
+  .features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .feature {
+    padding: 0.75rem;
+    background: #f3f4f6;
+    border-radius: 8px;
+    font-weight: 500;
+    color: #374151;
+  }
+
+  @media (max-width: 480px) {
+    .setup-card {
+      padding: 2rem;
+      margin: 1rem;
+    }
+    
+    .features {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</Layout>
