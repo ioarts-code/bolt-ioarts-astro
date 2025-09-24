@@ -5,8 +5,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Modern CMS Blog - Web Development Insights</title>
-		<meta name="description" content="Discover the latest insights and tutorials on modern web development, from JavaScript frameworks to database design." />
+		<title>Creative Portfolio - Gaming, Music & Digital Art</title>
+		<meta name="description" content="Explore a curated collection of gaming motifs, music artwork, and digital designs. From iconic game symbols to Swedish music culture." />
 	</head>
 	<body>
 		<slot />
@@ -27,15 +27,31 @@
 		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
+		background: #fafafa;
+		color: #1a1a1a;
 	}
 	
 	body {
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		min-height: 100vh;
+		line-height: 1.6;
 	}
 	
 	img {
 		max-width: 100%;
 		height: auto;
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		margin: 0;
+		font-weight: 600;
+		line-height: 1.3;
+	}
+
+	p {
+		margin: 0;
+	}
+
+	a {
+		color: inherit;
+		transition: color 0.2s ease;
 	}
 </style>
