@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 
 // Your Supabase project configuration
 const supabaseUrl = 'https://irocoqlvmhxqwlrasala.supabase.co'
-const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || 'your-anon-key-here'
+const supabaseKey = import.https://irocoqlvmhxqwlrasala.supabase.co || 'your-anon-key-here'
 
 // Check if we have valid configuration
 export const isPlaceholder = !supabaseKey || supabaseKey === 'your-anon-key-here'
