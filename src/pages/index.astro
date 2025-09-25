@@ -5,14 +5,43 @@ import { supabase, isPlaceholder, type Post } from '../lib/supabase';
 let posts: Post[] | null = null;
 let error = null;
 
-// Fetch posts from Supabase
-const { data, error: fetchError } = await supabase
-  .from('posts')
-  .select('*')
-  .order('created_at', { ascending: false });
-
-posts = data;
-error = fetchError;
+// Only fetch posts if Supabase is properly configured
+if (!isPlaceholder) {
+  try {
+    const { data, error: fetchError } = await supabase
+      .from('posts')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    posts = data;
+    error = fetchError;
+    
+    console.log('Posts fetched:', posts?.length || 0);
+    console.log('Error:', error);
+  } catch (e) {
+    console.error('Supabase fetch error:', e);
+    error = e;
+  }
+} else {
+  console.log('Supabase not configured - using placeholder data');
+  // Add some sample data for testing
+  posts = [
+    {
+      id: '1',
+      title: 'Sample Post',
+      content: 'This is a sample post to test the layout.',
+      image_url: 'https://images.pexels.com/photos/1591056/pexels-photo-1591056.jpeg?auto=compress&cs=tinysrgb&w=800',
+      slug: 'sample-post',
+      created_at: new Date().toISOString(),
+      link_one_title: '',
+      link_one_url: '',
+      link_two_title: 'Design',
+      link_two_url: '',
+      link_three_title: '',
+      link_three_url: ''
+    }
+  ];
+}
 ---
 
 <Layout>
@@ -22,6 +51,17 @@ error = fetchError;
       <p class="subtitle">Creative digital art & design</p>
     </header>
 
+    {error && (
+      <div class="error-message">
+        <p>Error loading posts: {error.message || 'Unknown error'}</p>
+      </div>
+    )}
+
+    {!posts || posts.length === 0 ? (
+      <div class="no-posts">
+        <p>No posts found. {isPlaceholder ? 'Please connect to Supabase to view your portfolio.' : 'Check your database connection.'}</p>
+      </div>
+    ) : (
     <section class="grid">
       {posts?.map((post: Post) => (
         <article class="card">
@@ -50,6 +90,7 @@ error = fetchError;
         </article>
       ))}
     </section>
+    )}
   </main>
 </Layout>
 
@@ -163,6 +204,26 @@ error = fetchError;
     border-radius: 12px;
     font-weight: 400;
     font-size: 0.75rem;
+  }
+
+  .error-message {
+    text-align: center;
+    padding: 2rem;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+  }
+
+  .error-message p {
+    color: #dc2626;
+    margin: 0;
+  }
+
+  .no-posts {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #666;
   }
 
   @media (max-width: 768px) {
