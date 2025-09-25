@@ -1,12 +1,13 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL
-const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+// Your Supabase project configuration
+const supabaseUrl = 'https://irocoqlvmhxqwlrasala.supabase.co'
+const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || 'your-anon-key-here'
 
-// Check if we're using placeholder values
-export const isPlaceholder = !supabaseUrl || !supabaseKey || supabaseUrl === 'https://placeholder.supabase.co' || supabaseKey === 'placeholder-key'
+// Check if we have valid configuration
+export const isPlaceholder = !supabaseKey || supabaseKey === 'your-anon-key-here'
 
-export const supabase = createClient(supabaseUrl || 'https://placeholder.supabase.co', supabaseKey || 'placeholder-key')
+export const supabase = createClient(supabaseUrl, supabaseKey)
 
 export interface Post {
   id: string
