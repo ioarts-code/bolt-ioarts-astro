@@ -5,16 +5,14 @@ import { supabase, isPlaceholder, type Post } from '../lib/supabase';
 let posts: Post[] | null = null;
 let error = null;
 
-// Only attempt to fetch if we have real Supabase credentials
-if (!isPlaceholder) {
-  const { data, error: fetchError } = await supabase
-    .from('posts')
-    .select('*')
-    .order('created_at', { ascending: false });
-  
-  posts = data;
-  error = fetchError;
-}
+// Fetch posts from Supabase
+const { data, error: fetchError } = await supabase
+  .from('posts')
+  .select('*')
+  .order('created_at', { ascending: false });
+
+posts = data;
+error = fetchError;
 ---
 
 <Layout>
@@ -24,43 +22,34 @@ if (!isPlaceholder) {
       <p class="subtitle">Creative digital art & design</p>
     </header>
 
-    {isPlaceholder ? (
-      <div class="setup-notice">
-        <div class="setup-card">
-          <h2>Connect Database</h2>
-          <p>Click "Connect to Supabase" to view your portfolio</p>
-        </div>
-      </div>
-    ) : (
-      <section class="grid">
-        {posts?.map((post: Post) => (
-          <article class="card">
-            <a href={`/posts/${post.slug}`} class="card-link">
-              <div class="image-container">
-                <img src={post.image_url} alt={post.title} loading="lazy" />
+    <section class="grid">
+      {posts?.map((post: Post) => (
+        <article class="card">
+          <a href={`/posts/${post.slug}`} class="card-link">
+            <div class="image-container">
+              <img src={post.image_url} alt={post.title} loading="lazy" />
+            </div>
+            <div class="content">
+              <h3 class="post-title">{post.title}</h3>
+              <p class="post-excerpt">
+                {post.content.length > 80 ? post.content.substring(0, 80) + '...' : post.content}
+              </p>
+              <div class="meta">
+                <time class="date">
+                  {new Date(post.created_at).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric'
+                  })}
+                </time>
+                {post.link_two_title && (
+                  <span class="tag">{post.link_two_title}</span>
+                )}
               </div>
-              <div class="content">
-                <h3 class="post-title">{post.title}</h3>
-                <p class="post-excerpt">
-                  {post.content.length > 80 ? post.content.substring(0, 80) + '...' : post.content}
-                </p>
-                <div class="meta">
-                  <time class="date">
-                    {new Date(post.created_at).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric'
-                    })}
-                  </time>
-                  {post.link_two_title && (
-                    <span class="tag">{post.link_two_title}</span>
-                  )}
-                </div>
-              </div>
-            </a>
-          </article>
-        ))}
-      </section>
-    )}
+            </div>
+          </a>
+        </article>
+      ))}
+    </section>
   </main>
 </Layout>
 
@@ -90,35 +79,6 @@ if (!isPlaceholder) {
     color: #666;
     margin: 0;
     font-weight: 400;
-  }
-
-  .setup-notice {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 300px;
-  }
-
-  .setup-card {
-    background: #fafafa;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    padding: 2rem;
-    text-align: center;
-    max-width: 400px;
-  }
-
-  .setup-card h2 {
-    font-size: 1.25rem;
-    font-weight: 500;
-    margin: 0 0 0.5rem 0;
-    color: #111;
-  }
-
-  .setup-card p {
-    color: #666;
-    margin: 0;
-    font-size: 0.9rem;
   }
 
   .grid {
