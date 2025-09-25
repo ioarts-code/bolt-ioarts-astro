@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 
 // Your Supabase project configuration
 const supabaseUrl = 'https://irocoqlvmhxqwlrasala.supabase.co'
-const supabaseKey = mport.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlyb2NvcWx2bWh4cXdscmFzYWxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2MzgwOTMsImV4cCI6MjA3NDIxNDA5M30.SPsE2xC0xzuGS2Bgy3_bk7AHgh5SLMJPsW0rU3KWP4E || 'your-anon-key-here'
+const supabaseKey = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlyb2NvcWx2bWh4cXdscmFzYWxhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2MzgwOTMsImV4cCI6MjA3NDIxNDA5M30.SPsE2xC0xzuGS2Bgy3_bk7AHgh5SLMJPsW0rU3KWP4E || 'your-anon-key-here'
 
 // Check if we have valid configuration
 export const isPlaceholder = !supabaseKey || supabaseKey === 'your-anon-key-here'
