@@ -1,7 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { supabase, type Post } from '../../lib/supabase';
-import { isPlaceholder } from '../../lib/supabase';
 
 const { slug } = Astro.params;
 
@@ -9,34 +8,23 @@ if (!slug) {
   throw new Error('Slug parameter is required');
 }
 
-// Only attempt to fetch if we have real Supabase credentials
 let post = null;
 let error = null;
 
-if (!isPlaceholder) {
-  const { data, error: fetchError } = await supabase
-    .from('posts')
-    .select('*')
-    .eq('slug', slug)
-    .single();
-  
-  post = data;
-  error = fetchError;
-  
-  if (error || !post) {
-    throw new Error(`Post not found: ${slug}`);
-  }
-} else {
-  // Redirect to home page if Supabase not configured
-  return Astro.redirect('/');
+const { data, error: fetchError } = await supabase
+  .from('posts')
+  .select('*')
+  .eq('slug', slug)
+  .single();
+
+post = data;
+error = fetchError;
+
+if (error || !post) {
+  throw new Error(`Post not found: ${slug}`);
 }
 
 export async function getStaticPaths() {
-  // Return empty array if Supabase not configured
-  if (isPlaceholder) {
-    return [];
-  }
-  
   const { data: posts } = await supabase
     .from('posts')
     .select('slug');
@@ -296,4 +284,3 @@ export async function getStaticPaths() {
     }
   }
 </style>
-</Layout>
