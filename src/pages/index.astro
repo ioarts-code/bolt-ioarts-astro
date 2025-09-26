@@ -1,46 +1,24 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { supabase, isPlaceholder, type Post } from '../lib/supabase';
+import { supabase, type Post } from '../lib/supabase';
 
 let posts: Post[] | null = null;
 let error = null;
 
-// Only fetch posts if Supabase is properly configured
-if (!isPlaceholder) {
-  try {
-    const { data, error: fetchError } = await supabase
-      .from('posts')
-      .select('*')
-      .order('created_at', { ascending: false });
-    
-    posts = data;
-    error = fetchError;
-    
-    console.log('Posts fetched:', posts?.length || 0);
-    console.log('Error:', error);
-  } catch (e) {
-    console.error('Supabase fetch error:', e);
-    error = e;
-  }
-} else {
-  console.log('Supabase not configured - using placeholder data');
-  // Add some sample data for testing
-  posts = [
-    {
-      id: '1',
-      title: 'Sample Post',
-      content: 'This is a sample post to test the layout.',
-      image_url: 'https://images.pexels.com/photos/1591056/pexels-photo-1591056.jpeg?auto=compress&cs=tinysrgb&w=800',
-      slug: 'sample-post',
-      created_at: new Date().toISOString(),
-      link_one_title: '',
-      link_one_url: '',
-      link_two_title: 'Design',
-      link_two_url: '',
-      link_three_title: '',
-      link_three_url: ''
-    }
-  ];
+try {
+  const { data, error: fetchError } = await supabase
+    .from('posts')
+    .select('*')
+    .order('created_at', { ascending: false });
+  
+  posts = data;
+  error = fetchError;
+  
+  console.log('Posts fetched:', posts?.length || 0);
+  console.log('Error:', error);
+} catch (e) {
+  console.error('Supabase fetch error:', e);
+  error = e;
 }
 ---
 
