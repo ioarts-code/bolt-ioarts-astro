@@ -15,7 +15,9 @@ try {
   error = fetchError;
   
   console.log('Posts fetched:', posts?.length || 0);
-  console.log('Error:', error);
+  if (error) {
+    console.error('Supabase error:', error);
+  }
 } catch (e) {
   console.error('Supabase fetch error:', e);
   error = e;
