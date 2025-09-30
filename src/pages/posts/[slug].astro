@@ -75,15 +75,23 @@ export async function getStaticPaths() {
         <footer class="post-footer">
           <div class="post-links">
             {post.link_one_title && post.link_one_url && (
-              <a href={post.link_one_url} class="post-link primary" target="_blank" rel="noopener noreferrer">
+              <a href={post.link_one_url} class="post-link" target="_blank" rel="noopener noreferrer">
                 {post.link_one_title}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               </a>
             )}
+            {post.link_two_title && post.link_two_url && (
+              <a href={post.link_two_url} class="post-link" target="_blank" rel="noopener noreferrer">
+                {post.link_two_title}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            )}
             {post.link_three_title && post.link_three_url && (
-              <a href={post.link_three_url} class="post-link secondary" target="_blank" rel="noopener noreferrer">
+              <a href={post.link_three_url} class="post-link" target="_blank" rel="noopener noreferrer">
                 {post.link_three_title}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -231,25 +239,13 @@ export async function getStaticPaths() {
     opacity: 1;
   }
 
-  .post-link.primary {
+  .post-link {
     background: #4f46e5;
     color: white;
   }
 
-  .post-link.primary:hover {
+  .post-link:hover {
     background: #4338ca;
-    transform: translateY(-1px);
-  }
-
-  .post-link.secondary {
-    background: white;
-    color: #374151;
-    border-color: #d1d5db;
-  }
-
-  .post-link.secondary:hover {
-    background: #f9fafb;
-    border-color: #9ca3af;
     transform: translateY(-1px);
   }
 
